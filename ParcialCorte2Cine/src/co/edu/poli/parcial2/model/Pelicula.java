@@ -30,7 +30,7 @@ public class Pelicula extends ProduccionAudiovisual {
 
     /**
      * Indica si la pelicula es largometraje segun su duracion.
-     * @return true si duracionMinutos >= 60; false en caso contrario
+     * @return true si duracionMinutos {@code >= 60}; false en caso contrario
      */
     public boolean esLargometraje() {
         return getDuracionMinutos() >= 60;
@@ -47,8 +47,13 @@ public class Pelicula extends ProduccionAudiovisual {
                (getDirectorDeCine() != null ? getDirectorDeCine().getNombre() : "N/A");
     }
 
-    /** @return genero actual */
+    /** Obtiene el genero actual.
+     *  @return genero de la pelicula
+     */
     public String getGenero() { return genero; }
-    /** @param genero nuevo genero */
+
+    /** Establece el genero.
+     *  @param genero nuevo genero
+     */
     public void setGenero(String genero) { this.genero = genero; }
 }

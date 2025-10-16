@@ -14,6 +14,9 @@ public class ImplementacionOperacionCRUD implements OperacionCRUD, OperacionArch
     /** Lista interna que almacena las producciones. */
     private final List<ProduccionAudiovisual> inventario = new ArrayList<>();
 
+    /** Crea la implementacion con inventario vacio en memoria. */
+    public ImplementacionOperacionCRUD() { }
+
     /** {@inheritDoc} */
     @Override
     public String create(ProduccionAudiovisual o) {
@@ -98,6 +101,9 @@ public class ImplementacionOperacionCRUD implements OperacionCRUD, OperacionArch
         }
     }
 
-    /** Exposicion de solo lectura del inventario (referencia viva). */
+    /**
+     * Devuelve la lista interna de producciones (referencia viva).
+     * @return lista de producciones en memoria
+     */
     public List<ProduccionAudiovisual> getInventario() { return inventario; }
 }

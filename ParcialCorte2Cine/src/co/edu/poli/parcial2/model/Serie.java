@@ -30,7 +30,7 @@ public class Serie extends ProduccionAudiovisual {
 
     /**
      * Indica si la serie puede considerarse miniserie.
-     * @return true si numeroTemporadas <= 2; false en caso contrario
+     * @return true si numeroTemporadas {@code <= 2}; false en caso contrario
      */
     public boolean esMiniSerie() {
         return numeroTemporadas <= 2;
@@ -57,8 +57,13 @@ public class Serie extends ProduccionAudiovisual {
                (getDirectorDeCine() != null ? getDirectorDeCine().getNombre() : "N/A");
     }
 
-    /** @return numero total de temporadas */
+    /** Obtiene el numero total de temporadas.
+     *  @return numero de temporadas
+     */
     public int getNumeroTemporadas() { return numeroTemporadas; }
-    /** @param numeroTemporadas nuevo numero de temporadas */
+
+    /** Establece el numero total de temporadas.
+     *  @param numeroTemporadas nuevo numero de temporadas
+     */
     public void setNumeroTemporadas(int numeroTemporadas) { this.numeroTemporadas = numeroTemporadas; }
 }

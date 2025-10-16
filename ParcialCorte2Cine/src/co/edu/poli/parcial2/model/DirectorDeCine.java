@@ -31,19 +31,34 @@ public class DirectorDeCine implements Serializable {
         this.nacionalidad = nacionalidad;
     }
 
-    /** @return identificador del director */
+    /** Obtiene el identificador del director.
+     *  @return identificador del director
+     */
     public int getId() { return id; }
-    /** @param id nuevo identificador */
+
+    /** Establece el identificador del director.
+     *  @param id nuevo identificador
+     */
     public void setId(int id) { this.id = id; }
 
-    /** @return nombre del director */
+    /** Obtiene el nombre del director.
+     *  @return nombre del director
+     */
     public String getNombre() { return nombre; }
-    /** @param nombre nuevo nombre */
+
+    /** Establece el nombre del director.
+     *  @param nombre nuevo nombre
+     */
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    /** @return nacionalidad del director */
+    /** Obtiene la nacionalidad del director.
+     *  @return nacionalidad del director
+     */
     public String getNacionalidad() { return nacionalidad; }
-    /** @param nacionalidad nueva nacionalidad */
+
+    /** Establece la nacionalidad del director.
+     *  @param nacionalidad nueva nacionalidad
+     */
     public void setNacionalidad(String nacionalidad) { this.nacionalidad = nacionalidad; }
 
     @Override

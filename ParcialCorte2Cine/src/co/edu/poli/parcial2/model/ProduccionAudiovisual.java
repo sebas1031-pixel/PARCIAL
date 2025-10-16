@@ -40,15 +40,11 @@ public abstract class ProduccionAudiovisual implements Serializable {
         this.directorDeCine = directorDeCine;
     }
 
-    // ---------- Contrato que implementan las subclases ----------
-
     /**
      * Retorna una linea resumida con los datos clave de la produccion.
      * @return texto legible para listados
      */
     public abstract String listar();
-
-    // ---------- Utilidades comunes estilo UML ----------
 
     @Override
     public String toString() {
@@ -57,13 +53,18 @@ public abstract class ProduccionAudiovisual implements Serializable {
                 + " min, director=" + (directorDeCine != null ? directorDeCine.getNombre() : "N/A") + "}";
     }
 
-    /** @return identificador serial de la produccion */
+    /** Devuelve el serial de la produccion.
+     *  @return identificador serial de la produccion
+     */
     public int getSerial() { return serial; }
 
     /**
      * Verifica reglas basicas del contenido.
      * @param visualizacion minutos vistos (puede ser 0)
-     * @return 0 si todo es valido; 1 si titulo vacio; 2 si duracion <= 0; 3 si visualizacion < 0
+     * @return 0 si todo es valido;
+     *         1 si el titulo esta vacio;
+     *         2 si la duracion {@code <= 0};
+     *         3 si la visualizacion {@code < 0}
      */
     public int verificacionContenido(int visualizacion) {
         if (titulo == null || titulo.isBlank()) return 1;
@@ -87,26 +88,6 @@ public abstract class ProduccionAudiovisual implements Serializable {
     }
 
     /**
-     * Calcula una duracion base en minutos.
-     * @return duracion en minutos
-     */
-    protected double calcularDuracionBase() {
-        return duracionMinutos;
-    }
-
-    /**
-     * Calcula una duracion ajustada segun una condicion simple.
-     * @param condicion por ejemplo "PREVIEW"
-     * @return duracion en minutos ajustada
-     */
-    protected double calcularDuracionBase(String condicion) {
-        if (condicion == null) return calcularDuracionBase();
-        String c = condicion.toUpperCase();
-        if (c.equals("PREVIEW")) return duracionMinutos * 0.10;
-        return duracionMinutos;
-    }
-
-    /**
      * Devuelve una etiqueta uniforme tipo: "Titulo" — Dir. Nombre (anio)
      * @return texto de etiqueta
      */
@@ -116,28 +97,48 @@ public abstract class ProduccionAudiovisual implements Serializable {
                " (" + determinarAnioEstreno() + ")";
     }
 
-    // ---------- Getters y setters ----------
-
-    /** @param serial nuevo identificador */
+    /** Establece el serial de la produccion.
+     *  @param serial nuevo identificador
+     */
     public void setSerial(int serial) { this.serial = serial; }
 
-    /** @return titulo actual */
+    /** Obtiene el titulo actual.
+     *  @return titulo de la produccion
+     */
     public String getTitulo() { return titulo; }
-    /** @param titulo nuevo titulo */
+
+    /** Establece el titulo.
+     *  @param titulo nuevo titulo
+     */
     public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    /** @return duracion en minutos */
+    /** Obtiene la duracion en minutos.
+     *  @return duracion en minutos
+     */
     public int getDuracionMinutos() { return duracionMinutos; }
-    /** @param duracionMinutos nueva duracion */
+
+    /** Establece la duracion en minutos.
+     *  @param duracionMinutos nueva duracion
+     */
     public void setDuracionMinutos(int duracionMinutos) { this.duracionMinutos = duracionMinutos; }
 
-    /** @return fecha de estreno */
+    /** Obtiene la fecha de estreno.
+     *  @return fecha de estreno
+     */
     public String getFechaEstreno() { return fechaEstreno; }
-    /** @param fechaEstreno nueva fecha de estreno */
+
+    /** Establece la fecha de estreno.
+     *  @param fechaEstreno nueva fecha de estreno
+     */
     public void setFechaEstreno(String fechaEstreno) { this.fechaEstreno = fechaEstreno; }
 
-    /** @return director asociado */
+    /** Obtiene el director asociado.
+     *  @return director de cine
+     */
     public DirectorDeCine getDirectorDeCine() { return directorDeCine; }
-    /** @param directorDeCine nuevo director asociado */
+
+    /** Establece el director asociado.
+     *  @param directorDeCine nuevo director asociado
+     */
     public void setDirectorDeCine(DirectorDeCine directorDeCine) { this.directorDeCine = directorDeCine; }
 }

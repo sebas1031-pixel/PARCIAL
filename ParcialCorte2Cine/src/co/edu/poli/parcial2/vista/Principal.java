@@ -7,11 +7,10 @@ import co.edu.poli.parcial2.model.*;
 import co.edu.poli.parcial2.servicios.ImplementacionOperacionCRUD;
 
 /**
- * Clase principal de consola.
- * Orquesta el menu de 8 opciones: CRUD basico, serializar, deserializar y salir.
- * Ahora el director se captura por consola al crear cada produccion.
+ * Clase principal de consola para ejecutar el menu de la aplicacion de cine.
+ * Implementa 8 opciones: 5 CRUD + serializar + deserializar + salir.
  */
-public class Principal {
+public final class Principal {
 
     /** Ruta del archivo binario para persistencia. */
     private static final String RUTA = "./data/producciones.dat";
@@ -20,7 +19,13 @@ public class Principal {
     private static final ImplementacionOperacionCRUD svc = new ImplementacionOperacionCRUD();
 
     /**
-     * Punto de entrada de la aplicacion.
+     * Evita la instanciacion de la clase principal.
+     * Se usa solo como contenedor de main y metodos estaticos.
+     */
+    private Principal() { throw new AssertionError("No instanciable"); }
+
+    /**
+     * Punto de entrada de la aplicacion de consola.
      * @param args argumentos de linea de comandos (no usados)
      */
     public static void main(String[] args) {
@@ -29,11 +34,11 @@ public class Principal {
         do {
             op = menu(sc);
             switch (op) {
-                case 1 -> crear(sc);               // sub menu: Pelicula o Serie
+                case 1 -> crear(sc);              // sub menu: Pelicula o Serie
                 case 2 -> listarTodas();
-                case 3 -> listarUna(sc);           // por serial
-                case 4 -> modificarSerie(sc);      // Update Serie
-                case 5 -> eliminarPelicula(sc);    // Delete Pelicula
+                case 3 -> listarUna(sc);          // por serial
+                case 4 -> modificarSerie(sc);     // Update Serie
+                case 5 -> eliminarPelicula(sc);   // Delete Pelicula
                 case 6 -> System.out.println(svc.serializar(RUTA));
                 case 7 -> System.out.println(svc.deserializar(RUTA));
                 case 8 -> System.out.println("Saliendo...");
@@ -43,6 +48,8 @@ public class Principal {
         } while (op != 8);
         sc.close();
     }
+
+    // -------------------- MENU --------------------
 
     /**
      * Muestra el menu principal y retorna la opcion elegida.
@@ -138,7 +145,7 @@ public class Principal {
 
     /**
      * Modifica una Serie conservando el mismo serial.
-     * Permite dejar campos sin cambio.
+     * Permite dejar campos sin cambio (enter vacio en campos de texto).
      * @param sc scanner
      */
     private static void modificarSerie(Scanner sc) {
@@ -153,7 +160,7 @@ public class Principal {
         Integer nuevaDur    = leerEnteroOpc(sc, "nueva duracion por episodio (min)");
         Integer nuevasTemps = leerEnteroOpc(sc, "nuevo numero de temporadas");
 
-        // Director: puedes permitir cambiarlo tambien si quieres
+        // Posibilidad de cambiar director
         System.out.println("-- Cambiar director? 1=si  2=no --");
         int ch = leerEntero(sc);
         DirectorDeCine dir = orig.getDirectorDeCine();
@@ -203,7 +210,7 @@ public class Principal {
 
     // -------------------- UTILIDADES DE ENTRADA --------------------
 
-    /** Pausa de consola. */
+    /** Pausa basica para la consola. */
     private static void pause(Scanner sc) { System.out.print("(Enter) "); sc.nextLine(); }
 
     /** Lee un entero robusto desde consola. */
@@ -215,7 +222,7 @@ public class Principal {
         }
     }
 
-    /** Lee un entero presentando una etiqueta previa. */
+    /** Lee un entero mostrando una etiqueta previa. */
     private static int leerEnteroConLabel(Scanner sc, String label) {
         System.out.print(label + ": ");
         return leerEntero(sc);
