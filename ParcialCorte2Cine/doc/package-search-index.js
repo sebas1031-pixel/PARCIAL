@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"m":"ParcialCorte2Cine","l":"co.edu.poli.parcial2.model"},{"m":"ParcialCorte2Cine","l":"co.edu.poli.parcial2.servicios"},{"m":"ParcialCorte2Cine","l":"co.edu.poli.parcial2.vista"}];updateSearchResults();
