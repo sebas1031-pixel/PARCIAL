@@ -5,10 +5,11 @@ import java.util.Arrays;
 import java.util.Scanner;
 import co.edu.poli.parcial2.model.*;
 import co.edu.poli.parcial2.servicios.ImplementacionOperacionCRUD;
-
+import co.edu.poli.parcial2.model.*;
 /**
  * Clase principal de consola para ejecutar el menu de la aplicacion de cine.
  * Implementa 8 opciones: 5 CRUD + serializar + deserializar + salir.
+ * El director se deja predefinido desde el codigo (no se captura por menu).
  */
 public final class Principal {
 
@@ -17,6 +18,10 @@ public final class Principal {
 
     /** Servicio CRUD y archivo. */
     private static final ImplementacionOperacionCRUD svc = new ImplementacionOperacionCRUD();
+
+    /** Director predefinido (requisito del enunciado). */
+    private static final DirectorDeCine DIRECTOR_DEF =
+            new DirectorDeCine(1, "Christopher Nolan", "Britanico");
 
     /**
      * Evita la instanciacion de la clase principal.
@@ -29,6 +34,9 @@ public final class Principal {
      * @param args argumentos de linea de comandos (no usados)
      */
     public static void main(String[] args) {
+        // Asegura que exista la carpeta ./data para guardar/leer archivos
+        new java.io.File("./data").mkdirs();
+
         Scanner sc = new Scanner(System.in);
         int op;
         do {
@@ -37,7 +45,7 @@ public final class Principal {
                 case 1 -> crear(sc);              // sub menu: Pelicula o Serie
                 case 2 -> listarTodas();
                 case 3 -> listarUna(sc);          // por serial
-                case 4 -> modificarSerie(sc);     // Update Serie
+                case 4 -> modificarSerie(sc);     // Update Serie (director permanece igual)
                 case 5 -> eliminarPelicula(sc);   // Delete Pelicula
                 case 6 -> System.out.println(svc.serializar(RUTA));
                 case 7 -> System.out.println(svc.deserializar(RUTA));
@@ -51,11 +59,6 @@ public final class Principal {
 
     // -------------------- MENU --------------------
 
-    /**
-     * Muestra el menu principal y retorna la opcion elegida.
-     * @param sc scanner compartido
-     * @return numero de opcion
-     */
     private static int menu(Scanner sc) {
         System.out.println("\n=== Streaming (CRUD + Archivo) ===");
         System.out.println("1. Crear (Pelicula o Serie)");
@@ -72,10 +75,6 @@ public final class Principal {
 
     // -------------------- CREATE --------------------
 
-    /**
-     * Sub menu de creacion para elegir Pelicula o Serie.
-     * @param sc scanner
-     */
     private static void crear(Scanner sc) {
         System.out.println("-- Crear -- 1) Pelicula  2) Serie");
         int tipo = leerEntero(sc);
@@ -84,10 +83,7 @@ public final class Principal {
         else System.out.println("Tipo invalido.");
     }
 
-    /**
-     * Captura datos y crea una Pelicula (incluye capturar director).
-     * @param sc scanner
-     */
+    /** Crea Pelicula usando el director predefinido (no se pide por menu). */
     private static void crearPelicula(Scanner sc) {
         int serial = leerEnteroConLabel(sc, "serial");
         String titulo = leerTexto(sc, "titulo");
@@ -95,17 +91,11 @@ public final class Principal {
         int dur = leerEnteroConLabel(sc, "duracion (min)");
         String genero = leerTexto(sc, "genero");
 
-        System.out.println("-- Datos del director --");
-        DirectorDeCine dir = capturarDirector(sc);
-
-        Pelicula p = new Pelicula(serial, titulo, fecha, dur, dir, genero);
+        Pelicula p = new Pelicula(serial, titulo, fecha, dur, DIRECTOR_DEF, genero);
         System.out.println(svc.create(p));
     }
 
-    /**
-     * Captura datos y crea una Serie (incluye capturar director).
-     * @param sc scanner
-     */
+    /** Crea Serie usando el director predefinido (no se pide por menu). */
     private static void crearSerie(Scanner sc) {
         int serial = leerEnteroConLabel(sc, "serial");
         String titulo = leerTexto(sc, "titulo");
@@ -113,28 +103,18 @@ public final class Principal {
         int durEpisodio = leerEnteroConLabel(sc, "duracion por episodio (min)");
         int temporadas = leerEnteroConLabel(sc, "numero de temporadas");
 
-        System.out.println("-- Datos del director --");
-        DirectorDeCine dir = capturarDirector(sc);
-
-        Serie s = new Serie(serial, titulo, fecha, durEpisodio, dir, temporadas);
+        Serie s = new Serie(serial, titulo, fecha, durEpisodio, DIRECTOR_DEF, temporadas);
         System.out.println(svc.create(s));
     }
 
     // -------------------- READ --------------------
 
-    /**
-     * Lista todas las producciones del inventario.
-     */
     private static void listarTodas() {
         ProduccionAudiovisual[] arr = svc.readAll();
         if (arr.length == 0) { System.out.println("(sin producciones)"); return; }
         Arrays.stream(arr).forEach(p -> System.out.println(p.listar()));
     }
 
-    /**
-     * Lista una produccion por su serial.
-     * @param sc scanner
-     */
     private static void listarUna(Scanner sc) {
         int serial = leerEnteroConLabel(sc, "serial a buscar");
         ProduccionAudiovisual p = svc.readId(serial);
@@ -145,8 +125,7 @@ public final class Principal {
 
     /**
      * Modifica una Serie conservando el mismo serial.
-     * Permite dejar campos sin cambio (enter vacio en campos de texto).
-     * @param sc scanner
+     * El director permanece siendo el predefinido (no editable por menu).
      */
     private static void modificarSerie(Scanner sc) {
         int serial = leerEnteroConLabel(sc, "serial de la serie");
@@ -160,21 +139,12 @@ public final class Principal {
         Integer nuevaDur    = leerEnteroOpc(sc, "nueva duracion por episodio (min)");
         Integer nuevasTemps = leerEnteroOpc(sc, "nuevo numero de temporadas");
 
-        // Posibilidad de cambiar director
-        System.out.println("-- Cambiar director? 1=si  2=no --");
-        int ch = leerEntero(sc);
-        DirectorDeCine dir = orig.getDirectorDeCine();
-        if (ch == 1) {
-            System.out.println("-- Datos del nuevo director --");
-            dir = capturarDirector(sc);
-        }
-
         Serie mod = new Serie(
             orig.getSerial(),
             noNull(nuevoTitulo,  orig.getTitulo()),
             noNull(nuevaFecha,   orig.getFechaEstreno()),
             (nuevaDur    != null ? nuevaDur    : orig.getDuracionMinutos()),
-            dir,
+            DIRECTOR_DEF, // se mantiene el director predefinido
             (nuevasTemps != null ? nuevasTemps : orig.getNumeroTemporadas())
         );
         System.out.println(svc.update(serial, mod));
@@ -182,10 +152,6 @@ public final class Principal {
 
     // -------------------- DELETE (Pelicula) --------------------
 
-    /**
-     * Elimina una Pelicula por serial.
-     * @param sc scanner
-     */
     private static void eliminarPelicula(Scanner sc) {
         int serial = leerEnteroConLabel(sc, "serial de la pelicula");
         ProduccionAudiovisual p = svc.readId(serial);
@@ -194,26 +160,10 @@ public final class Principal {
         System.out.println(svc.delete(serial) != null ? "Eliminada." : "No se elimino.");
     }
 
-    // -------------------- CAPTURA DE DIRECTOR --------------------
+    // -------------------- UTILIDADES --------------------
 
-    /**
-     * Captura por consola los datos del director.
-     * @param sc scanner
-     * @return instancia de DirectorDeCine con los datos ingresados
-     */
-    private static DirectorDeCine capturarDirector(Scanner sc) {
-        int id = leerEnteroConLabel(sc, "id");
-        String nombre = leerTexto(sc, "nombre");
-        String nacionalidad = leerTexto(sc, "nacionalidad");
-        return new DirectorDeCine(id, nombre, nacionalidad);
-    }
-
-    // -------------------- UTILIDADES DE ENTRADA --------------------
-
-    /** Pausa basica para la consola. */
     private static void pause(Scanner sc) { System.out.print("(Enter) "); sc.nextLine(); }
 
-    /** Lee un entero robusto desde consola. */
     private static int leerEntero(Scanner sc) {
         while (true) {
             String s = sc.nextLine().trim();
@@ -222,13 +172,11 @@ public final class Principal {
         }
     }
 
-    /** Lee un entero mostrando una etiqueta previa. */
     private static int leerEnteroConLabel(Scanner sc, String label) {
         System.out.print(label + ": ");
         return leerEntero(sc);
     }
 
-    /** Lee un entero opcional (vacio retorna null). */
     private static Integer leerEnteroOpc(Scanner sc, String label) {
         System.out.print(label + " (opcional): ");
         String s = sc.nextLine().trim();
@@ -236,7 +184,6 @@ public final class Principal {
         try { return Integer.parseInt(s); } catch (NumberFormatException e) { return null; }
     }
 
-    /** Lee un texto no vacio. */
     private static String leerTexto(Scanner sc, String label) {
         System.out.print(label + ": ");
         String s = sc.nextLine().trim();
@@ -247,13 +194,11 @@ public final class Principal {
         return s;
     }
 
-    /** Lee un texto opcional (vacio retorna null). */
     private static String leerTextoOpc(Scanner sc, String label) {
         System.out.print(label + " (opcional): ");
         String s = sc.nextLine().trim();
         return s.isEmpty() ? null : s;
     }
 
-    /** Retorna v si no es null, de lo contrario retorna def. */
     private static String noNull(String v, String def) { return v != null ? v : def; }
 }
